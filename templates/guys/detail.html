@@ -1,11 +1,16 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ guy.last_name }} {{ guy.first_name }}{% endblock %}
+{% block title %}guy.last_name }} {{ guy.first_name }}{% endblock %}
 
 {% block content %}
-<a href="{% url 'guys:index' %}" class="btn btn-sm btn-link">← К списку</a>
+<div class="mb-3">
+    <a href="{% url 'guys:index' %}" class="btn btn-sm btn-link">← К списку</a>
+    {% if is_random %}
+        <a href="{% url 'guys:random' %}" class="btn btn-sm btn-outline-secondary">Другой случайный</a>
+    {% endif %}
+</div>
 
-<div class="card mt-3">
+<div class="card">
     <div class="card-body">
         <h1 class="h3 mb-4">{{ guy.last_name }} {{ guy.first_name }}</h1>
         <dl class="row mb-0">
@@ -15,20 +20,23 @@
             <dt class="col-sm-3">Пол</dt>
             <dd class="col-sm-9">{{ guy.get_gender_display }}</dd>
 
+            <dt class="col-sm-3">Имя</dt>
+            <dd class="col-sm-9">{{ guy.first_name }}</dd>
+
+            <dt class="col-sm-3">Фамилия</dt>
+            <dd class="col-sm-9">{{ guy.last_name }}</dd>
+
             <dt class="col-sm-3">Телефон</dt>
             <dd class="col-sm-9">{{ guy.phone }}</dd>
 
             <dt class="col-sm-3">Email</dt>
-            <dd class="col-sm-9">{{ guy.email }}</dd>
+            <dd class="col-sm-9">
+                <a href="mailto:{{ guy.email }}">{{ guy.email }}</a>
+            </dd>
 
             <dt class="col-sm-3">Адрес</dt>
             <dd class="col-sm-9">{{ guy.address }}</dd>
         </dl>
     </div>
 </div>
-    {% if is_random %}
-    <a href="{% url 'guys:random' %}" class="btn btn-sm btn-outline-secondary">
-        Другой случайный
-    </a>
-    {% endif %}
 {% endblock %}

@@ -78,25 +78,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
+LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Application-specific
+RANDOMDATATOOLS_URL = os.environ.get(
+    'RANDOMDATATOOLS_URL', 'https://api.randomdatatools.ru/'
+)
+INITIAL_LOAD_COUNT = int(os.environ.get('INITIAL_LOAD_COUNT', '1000'))
+PEOPLE_PER_PAGE = int(os.environ.get('PEOPLE_PER_PAGE', '50'))
