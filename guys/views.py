@@ -1,3 +1,7 @@
 from django.shortcuts import render
+from .models import Guy
 
-# Create your views here.
+
+def index(request):
+    guys = Guy.objects.all().order_by('id')
+    return render(request, 'guys/index.html', {'guys': guys})

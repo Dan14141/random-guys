@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Список людей{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Список людей (всего: {{ guys|length }})</h1>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Пол</th>
+            <th>Имя</th>
+            <th>Фамилия</th>
+            <th>Телефон</th>
+            <th>Email</th>
+            <th>Адрес</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for guy in guys %}
+            <tr>
+                <td>{{ guy.id }}</td>
+                <td>{{ guy.get_gender_display }}</td>
+                <td>{{ guy.first_name }}</td>
+                <td>{{ guy.last_name }}</td>
+                <td>{{ guy.phone }}</td>
+                <td>{{ guy.email }}</td>
+                <td>{{ guy.address }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+</body>
