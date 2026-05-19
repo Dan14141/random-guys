@@ -83,7 +83,7 @@ docker-compose up --build
 
 ```bash
 # 1. Клонировать и создать venv
-git clone <repo-url>
+git clone https://github.com/Dan14141/random-guys.git
 cd random-guys
 python -m venv venv
 source venv/bin/activate          # Windows: venv\Scripts\activate
