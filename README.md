@@ -61,7 +61,7 @@ HTTP-запросов библиотеки `requests`. Декоратор `@resp
 ## Быстрый запуск (Docker, рекомендуется)
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Dan14141/random-guys.git
 cd random-guys
 docker-compose up --build
 ```
