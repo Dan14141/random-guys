@@ -14,8 +14,8 @@ python manage.py migrate --noinput
 echo "Collecting static files..."
 python manage.py collectstatic --noinput || true
 
-echo "Loading initial people from API (skipped if DB already has people)..."
-python manage.py load_initial_people || true
+echo "Loading initial guys from API (skipped if DB already has guys)..."
+python manage.py load_initial_guys || true
 
 echo "Starting Gunicorn..."
-exec gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3
+exec gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3
