@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="text-center py-5">
+    <h1 class="h3">В базе данных нет людей</h1>
+    <a href="{% url 'guys:index' %}" class="btn btn-primary">На главную</a>
+</div>
+{% endblock %}

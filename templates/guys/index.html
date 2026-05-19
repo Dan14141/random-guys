@@ -3,7 +3,7 @@
 {% block title %}Список людей{% endblock %}
 
 {% block content %}
-<h1 class="h3 mb-3">Список людей (всего: {{ guys|length }})</h1>
+<h1 class="h3 mb-3">Список людей (всего: {{ page_obj.paginator.count }})</h1>
 
 <table class="table table-hover">
     <thead>
@@ -15,10 +15,11 @@
             <th>Телефон</th>
             <th>Email</th>
             <th>Адрес</th>
+            <th>Подробнее</th>
         </tr>
     </thead>
     <tbody>
-        {% for guy in guys %}
+        {% for guy in page_obj.object_list %}
             <tr>
                 <td>{{ guy.id }}</td>
                 <td>{{ guy.get_gender_display }}</td>
@@ -27,9 +28,36 @@
                 <td>{{ guy.phone }}</td>
                 <td>{{ guy.email }}</td>
                 <td>{{ guy.address }}</td>
+                <td>
+                    <a href="{% url 'guys:detail' guy.id %}" class="btn btn-sm btn-outline-primary">Открыть</a>
+                </td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
+
+{% if page_obj.has_other_pages %}
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">«</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">»</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
 {% endblock %}
 </body>
