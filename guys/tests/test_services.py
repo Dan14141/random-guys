@@ -1,3 +1,5 @@
+import json
+
 import pytest
 import responses
 from django.conf import settings
@@ -113,3 +115,31 @@ class TestLoadPeople:
         with pytest.raises(RandomGuysAPIError):
             load_guys(10)
         assert Guy.objects.count() == 0
+
+    @responses.activate
+    def test_fetch_splits_large_count_into_batches(self, sample_api_record):
+        """Запросы превышающие 100 разбиваем на несколько вызовов API"""
+
+        def callback(request):
+            # Имитируем реальный API: возвращаем ровно min(count, 100) записей
+            from urllib.parse import urlparse, parse_qs
+            count = int(parse_qs(urlparse(request.url).query)['count'][0])
+            actual = min(count, 100)
+            return (200, {}, json.dumps([sample_api_record] * actual))
+
+        responses.add_callback(
+            responses.GET,
+            settings.RANDOMDATATOOLS_URL,
+            callback=callback,
+            content_type='application/json',
+        )
+
+        result = fetch_guys_from_api(250)
+
+        # Должно быть ровно 3 запроса: 100 + 100 + 50
+        assert len(responses.calls) == 3
+        assert 'count=100' in responses.calls[0].request.url
+        assert 'count=100' in responses.calls[1].request.url
+        assert 'count=50' in responses.calls[2].request.url
+        # И на выходе ровно 250 записей
+        assert len(result) == 250

@@ -11,15 +11,16 @@ from .models import Guy
 
 logger = logging.getLogger(__name__)
 
+# API ограничивает выдачу 100 записями за один запрос
+API_BATCH_SIZE = 100
+
 
 class RandomGuysAPIError(Exception):
     """Исключение при ошибочном запросе к внешнему API"""
 
-def fetch_guys_from_api(count: int) -> list[dict]:
-    """Получаем нужное кол-во людей из внешнего API"""
-    if count <= 0:
-        return []
 
+def _fetch_batch(count: int) -> list[dict]:
+    """Получаем одну порцию данных из API (не более API_BATCH_SIZE записей)"""
     url = settings.RANDOMDATATOOLS_URL
     try:
         response = requests.get(url, params={'count': count}, timeout=30)
@@ -37,6 +38,32 @@ def fetch_guys_from_api(count: int) -> list[dict]:
         raise RandomGuysAPIError(f'Unexpected response shape: {type(data)}')
     return data
 
+
+def fetch_guys_from_api(count: int) -> list[dict]:
+    """Получаем нужное кол-во людей из внешнего API.
+
+    API ограничен 100 записями за запрос, поэтому большие запросы
+    разбиваются на несколько последовательных вызовов.
+    """
+    if count <= 0:
+        return []
+
+    result: list[dict] = []
+    remaining = count
+    while remaining > 0:
+        batch_size = min(remaining, API_BATCH_SIZE)
+        batch = _fetch_batch(batch_size)
+        if not batch:
+            # API вернул пустой ответ — прерываемся, чтобы не зациклиться
+            logger.warning('API returned empty batch, stopping early')
+            break
+        result.extend(batch)
+        remaining -= len(batch)
+        logger.info('Fetched batch of %d, total so far: %d', len(batch), len(result))
+
+    return result
+
+
 def guy_from_api_dict(data: dict) -> Guy:
     """Преобразуем запись в объект Guy"""
     return Guy(
@@ -47,6 +74,7 @@ def guy_from_api_dict(data: dict) -> Guy:
         email=data.get('Email', ''),
         address=data.get('Address', ''),
     )
+
 
 @transaction.atomic
 def load_guys(count: int) -> int:
